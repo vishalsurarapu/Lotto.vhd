@@ -1,23 +1,30 @@
 library ieee;
 use ieee.std_logic_1164.all;
 entity e_winning_FSM is 
-   port (   slv_input_number   : in    std_logic_vector(4 downto 0);
-            KEY_signal         : in    std_logic_vector(3 downto 0);
-            LEDR_Sginal        : out   std_logic_vector(9 downto 0)); --when needed 
+   port (   slv_player_input   : in    std_logic_vector(4 downto 0);
+	 slv_winning_number_Mem    : in    std_logic_vector(4 downto 0); 
+	 sl_reset                  : in    std_logic; 
+	 sl_CLK                    : in    std_logic; 
+	 sl_result                 : out   std_logic ); -- needs to be instatiated to key 0 in the mother entity for reset
+	 
 end entity e_winning_FSM;
 
 architecture a_winning_FSM of e_winning_FSM is 
 
-signal sl_Clock_int, sl_Resetn_int,  : std_logic;
-signal sl_Memref_int : std_logic_vector; 
-
+signal sl_Clock_int : std_logic ;  
+signal sl_Resetn_int   : std_logic;
+signal slv_Memref_int : std_logic_vector(4 downto 0); 
+signal slv_Regref_int : std_logic_vector(4 downto 0); 
 type t_fsm_states is (S_0, S_1, S_2, S_3, S_4, S_5, S_won, S_fail);
 signal fsm_state, fsm_nextstate : t_fsm_states;
    
 begin 
- sl_Clock_int <= KEY_signal(0);
- sl_Resetn_int <= slv_input_number(0);
- sl_input_int <= slv_input_number(1);
+;
+ sl_Resetn_int <= sl_reset ;
+ slv_Memref_int <= slv_winning_number_Mem;
+ slv_Regref_int <= slv_player_input ; 
+ sl_Clock_int <= sl_CLK;
+ 
  
  p_FSM_transitions: process (slv_Memref_int, fsm_state, slv_Regref_int) -- state table
    begin
@@ -41,16 +48,20 @@ begin
 								fsm_nextstate <= S_4; 
                      else
 								fsm_nextstate <= S_fail;
+								
                      end if;
          when S_4 =>	if (sl_Memref_int[4] = slv_Regref_int[4]) then
-								fsm_nextstate <= S_5; 
+								fsm_nextstate <= S_5;
+                                sl_result <= '1';								
                      else
 								fsm_nextstate <= S_fail;
+							
                      end if;
          when S_5 =>	
 								fsm_nextstate <= S_won; -- not neccessary just define the winning acion 
                      
-                     
+when S_fail =>	
+sl_result <= '0';
        
                   
          when others   => fsm_nextstate <= S_fail;
@@ -68,6 +79,6 @@ begin
       end if;
    end process p_FSM_nextstate;
 
-  -- here we can assign what ever signals and actions we would like to do 
+ 
 
 
