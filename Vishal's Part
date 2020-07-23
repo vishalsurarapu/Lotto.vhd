@@ -1,64 +1,80 @@
---this is the architecture for using switches for the input of the lottory number 
---and to display the output on 7-seg can be attached in the below mentioned spaces.
+--index is the digit highlighted in lottery number
+--lotteryinput is the number displayed in the digit  --- should be passed on to the HEX display
+--slv_lotteryinput is the number counter 0-10 -> 0-9:to display numbers -->10:to display a '-'
 
 
-architecture a_lotto of e_lotto is
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_unsigned.all;
 
-	--signal slv_indexinput_int:		std_logic_vector(inputnumber downto 0);
-	
-	constant n: positive := 5;
-	type lotteryinput is array (0 to 4) of unsigned(n-1 downto 0);
-	-- type lotteryinput is array (0 to 4) of unresolved_unsigned(n-1 downto 0);
+entity e_manualinput is
+	port (	slv_SW   : in  std_logic_vector(9 downto 0)
+			slv_lotteryinput : out std_logic_vector(4 downto 0)
+	);
+end entity e_manualinput;
 
-	signal sig_lotteryinput : lotteryinput;
+architecture a_manualinput of e_manualinput is
+
+
+	-- *********IMPORTANT*********
+	-- add below to the mother entity
+	-- constant n: positive := 5;
+	-- type lotteryinput is array (0 to 4) of unsigned(n-1 downto 0);
+	-- -- type lotteryinput is array (0 to 4) of unresolved_unsigned(n-1 downto 0);
+
+	-- signal slv_lotteryinput : lotteryinput;
 	signal index : natural range 0 to n-1;
 
 begin
-
-	--leds(n-1 downto 0) <= std_ulogic_vector(sig_lotteryinput(index));
-	--7-segment display declarations can be done here
 	-- set index
 	index <= 0;
   
-	process(clk)
+	p_manualinput: process(slv_SW, slv_lotteryinput)
 	begin
-	  if (rising_edge(clk)) then
+	  
 		-- set non indexed values arbitrarily
 		for i in 0 to n-1 loop
 
 		  if i = index then
-			if switches(1) = '1' then -- up
-			  sig_lotteryinput(i) <= sig_lotteryinput(i) + 1;
+			if slv_SW(0) = '1' then -- up
+			  if(slv_lotteryinput(i) == )
+			  slv_lotteryinput(i) <= slv_lotteryinput(i) + 1;
 			  --display the output on 7-seg 
 			  --pass the signal to FSM for comparisions 
 			end if;
 
-			if switches(2) = '1' then -- down
-			  sig_lotteryinput(i) <= sig_lotteryinput(i) + 1;
+			if slv_SW(1) = '1' then -- down
+			  slv_lotteryinput(i) <= slv_lotteryinput(i) - 1; 
 			  --display the output on 7-seg
 			  --pass the signal to FSM for comparisions
 			end if;
 
-			if switches(3) = '1' then -- right
+			if slv_SW(2) = '1' then -- right
 			  index <= index + 1;
-			  sig_lotteryinput(i) <= sig_lotteryinput(i);
+			  slv_lotteryinput(i) <= slv_lotteryinput(i);
 			  --display the output on 7-seg
 			  --pass the signal to FSM for comparisions
 			end if;
 
-			if switches(4) = '1' then -- left
+			if slv_SW(3) = '1' then -- left
 			  index <= index - 1;
-			  sig_lotteryinput(i) <= sig_lotteryinput(i);
+			  slv_lotteryinput(i) <= slv_lotteryinput(i);
 			  --display the output on 7-seg
 			  --pass the signal to FSM for comparisions
 			end if;
 
+			if slv_SW(4) = '1' then -- enter
+			index <= 0;
+			  slv_lotteryinput(i) <= slv_lotteryinput(i);
+			  --display the output on 7-seg
+			  --pass the signal to FSM for comparisions
+			end if;
 		  else
-			  sig_lotteryinput(i) <= (others => '0');
+			  slv_lotteryinput(i) <= (others => '0');
 		  end if;
 
 		end loop;
-	  end if; -- rising clock edge
-	end process;
+	end process p_manualinput;
 
-end architecture a_lotto;
+end architecture a_manualinput;
+	
