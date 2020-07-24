@@ -38,14 +38,46 @@ end component e_modulo_counter_er;
 
 
 
-begin 
-   p_welcome: process (sl_Clock_int, slv_input_signal)-- this process calls the components to disply input entering 
-   begin
-   -- call the welcome component outside the clock 
-      
-	    if  (rising_edge(sl_Clock_int)) then
-	  
-            
-        
-      end if;
-   end process p_shiftregFSM;
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+-- this part is a process that calls a modulo counter and display a flash of light using LEDR with an interval of 1 sec once the winning trigger signal is activated (=1)  
+	
+	
+signal sl_win_trigger_int : std_logic; -- indicates that the player has won (can be generated inside the FSM)
+signal sl_one_sec_en_int  :  std_logic;
+signal slv_led_on_off_int :  std_logic_vector (9 downto 0) ; 
+slv_led_on_off_int <= "0000000000"; -- initial value
+
+I_slow_clock: e_modulo_counter_er 
+		generic map	(	n => 26, k => 50000000)
+		port map	(	sl_clock	=>		CLOCK_50,
+						sl_reset_n	=>		KEY(0),
+						sl_enable	=>		'1',
+						slv_Q		=>		open,
+						sl_rollover	=>		sl_one_sec_en_int
+						
+);
+   p_mod_cnt: process(sl_clock, sl_reset_n, sl_win_trigger_int)
+  
+    begin 
+	if sl_reset_n ='0' then -- low active reset using key
+	then slv_led_on_off_int = "0000000000"; 
+	elsif (sl_win_trigger_int = '1') and ( sl_reset_n= '1')  then 
+	if(rising_edge(sl_clock)) then
+	if slv_led_on_off_int = "0000000000" then 
+     slv_led_on_off_int = "1111111111"; 
+    else 
+    slv_led_on_off_int = "0000000000"; 
+    end if ; 
+end if ; 
+end if ; 
+
+end process p_mod_cnt ;
