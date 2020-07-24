@@ -1,0 +1,101 @@
+--slv_index is the digit highlighted in lottery number
+--lotteryinput is the number displayed in the digit  --- should be passed on to the HEX display
+--slv_lotteryinput is the number counter 0-10 -> 0-9:to display numbers -->10:to display a '-'
+
+
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_unsigned.all;
+
+entity e_manualinput is
+	port (	slv_SW   : in  std_logic_vector(9 downto 0);
+			slv_lotteryinput : out std_logic_vector(0 to 4)	);
+
+end entity e_manualinput;
+
+architecture a_manualinput of e_manualinput is
+
+	constant n: positive := 5;
+	type lotteryinput is array (integer range<0 to 4>) of integer;
+	variable v_lotteryinput: lotteryinput(0 to 10);
+	-- type lotteryinput is array (integer range<0 to 4>) of unresolved_integer;
+
+	signal slv_lotteryinput : lotteryinput;
+	signal slv_index : natural range 0 to n-1;
+
+begin
+	-- set slv_index
+	slv_index <= 0;
+	slv_lotteryinput <= ('10' '10' '10' '10' '10');
+	p_manualinput: process(slv_SW, slv_lotteryinput)
+
+		begin
+			-- set non slv_indexed values arbitrarily
+			--for i in 0 to n-1 loop
+
+			--  if i = slv_index then
+			if slv_SW(0) = '1' then -- up
+
+			if(slv_lotteryinput(slv_index) = 10)
+				slv_lotteryinput(slv_index) <= 0;
+			else
+				slv_lotteryinput(slv_index) <= slv_lotteryinput(slv_index) + 1;
+			end if;
+			--display the output on 7-seg 
+			--pass the signal to FSM for comparisions 
+			end if;
+
+			if slv_SW(1) = '1' then -- down
+				
+				if(slv_lotteryinput(slv_index) = 10)
+					slv_lotteryinput(slv_index) <= 9;
+				else
+					slv_lotteryinput(slv_index) <= slv_lotteryinput(slv_index) - 1;
+				end if;
+			--display the output on 7-seg   
+			--pass the signal to FSM for comparisions
+
+			end if;
+
+			if slv_SW(2) = '1' then -- right
+				
+				if(slv_index = 4)
+					slv_index <= 0;
+				else
+					slv_index <= slv_index + 1;
+					slv_lotteryinput(slv_index) <= slv_lotteryinput(slv_index);
+				end if;
+
+			--display the output on 7-seg
+			--pass the signal to FSM for comparisions
+			end if;
+
+			if slv_SW(3) = '1' then -- left
+			
+				if(slv_index = 0)
+					slv_index <= 4;
+				else
+					slv_index <= slv_index - 1;
+					slv_lotteryinput(slv_index) <= slv_lotteryinput(slv_index);
+				end if;
+
+			--display the output on 7-seg
+			--pass the signal to FSM for comparisions
+			end if;
+
+			if slv_SW(4) = '1' then -- enter
+				slv_index <= 0;
+				slv_lotteryinput(slv_index) <= slv_lotteryinput(slv_index);
+			--display the output on 7-seg
+			--pass the signal to FSM for comparisions
+			end if;
+				
+			--   else
+			-- 	  slv_lotteryinput(slv_index) <= ('10' '10' '10' '10' '10');
+			--   end if;
+
+			--end loop;                          
+	end process p_manualinput;
+
+end architecture a_manualinput;
+	
