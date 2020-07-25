@@ -15,92 +15,73 @@ use ieee.std_logic_unsigned.all;
 
 entity e_manualinput is
 	port (	slv_SW   : in  std_logic_vector(9 downto 0);
-			slv_lotteryinput : out std_logic_vector(0 to 4);
-			slv_index : out std_logic_vector (0 to 4)
+			slv_playerinput : out std_logic_vector(0 to 4);
+			slv_index : out std_logic_vector (0 to 4) );
 
 end entity e_manualinput;
 
 architecture a_manualinput of e_manualinput is
 
 	constant n: positive := 5;
-	type lotterynumber is array (0 to 3) of std_logic_vector; --(xxxx)
-	type lotteryinput is array (0 to 4) of lotterynumber; --(xxxx xxxx xxxx xxxx xxxx)
+	
+	type t_lotterynumber is array (3 downto 0) of std_logic_vector; --(xxxx)
+	type lotteryinput is array (0 to 4) of t_lotterynumber; --(xxxx xxxx xxxx xxxx xxxx)
 		
-	variable v_lotteryinput: lotteryinput
-	-- type lotteryinput is array (integer range<0 to 4>) of unresolved_integer;
-
-	signal slv_lotteryinput : v_lotteryinput;
+	--variable v_lotteryinput: lotteryinput;
+	
+	signal slv_lotteryinput : lotteryinput ;
 	signal slv_index : natural range 0 to n-1;
 
 begin
 	-- set slv_index
 	slv_index <= 0;
-	slv_lotteryinput <= (others => '1010');
+	slv_lotteryinput <= ("1010","1010","1010","1010","1010");
+	
 	p_manualinput: process(slv_SW, slv_lotteryinput)
 
 		begin
 			-- set non slv_indexed values arbitrarily
-			--for i in 0 to n-1 loop
 
 			--  if i = slv_index then
 			if slv_SW(0) = '1' then -- up
 
-				if(slv_lotteryinput(slv_index) = "1010")
-					slv_lotteryinput(slv_index) <= "0000";
-				elsif( slv_lotteryinput(slv_index) = "1001")
-					slv_lotteryinput(slv_index) <= "0000";
-				else
-					slv_lotteryinput(slv_index) <= std_logic_vector(unsigned(slv_lotteryinput(slv_index)) + 1);
+				if(slv_lotteryinput(slv_index) = "1010") 		then					slv_lotteryinput(slv_index) <= "0000";
+				elsif( slv_lotteryinput(slv_index) = "1001") 	then					slv_lotteryinput(slv_index) <= "0000";
+				else				slv_lotteryinput(slv_index) <= std_logic_vector(unsigned(slv_lotteryinput(slv_index)) + 1);
 				end if;
-			--display the output on 7-seg 
-			--pass the signal to FSM for comparisions 
+				
 			end if;
 
 			if slv_SW(1) = '1' then -- down
 				
-				if(slv_lotteryinput(slv_index) = "1010")
-					slv_lotteryinput(slv_index) <= "1001";
-				elsif( slv_lotteryinput(slv_index) = "0000")
-					slv_lotteryinput(slv_index) <= "1001";
-				else
-					slv_lotteryinput(slv_index) <= std_logic_vector(unsigned(slv_lotteryinput(slv_index)) - 1);
+				if(slv_lotteryinput(slv_index) = "1010") 		then			slv_lotteryinput(slv_index) <= "1001";
+				elsif( slv_lotteryinput(slv_index) = "0000")	then			slv_lotteryinput(slv_index) <= "1001";
+				else		slv_lotteryinput(slv_index) <= std_logic_vector(unsigned(slv_lotteryinput(slv_index)) - 1);
 				end if;
-			--display the output on 7-seg   
-			--pass the signal to FSM for comparisions
+				
 
 			end if;
 
 			if slv_SW(2) = '1' then -- right
 				
-				if(slv_index = 4)
-					slv_index <= 0;
-				else
-					slv_index <= slv_index + 1;
+				if(slv_index = 4) 	then	slv_index <= 0;
+				else			slv_index <= slv_index + 1;
 				end if;
 
-			--display the output on 7-seg
-			--pass the signal to FSM for comparisions
 			end if;
 
 			if slv_SW(3) = '1' then -- left
 			
-				if(slv_index = 0)
-					slv_index <= 4;
-				else
-					slv_index <= slv_index - 1;
+				if(slv_index = 0) 	then	slv_index <= 4;
+				else			slv_index <= slv_index - 1;
 				end if;
-
-			--display the output on 7-seg
-			--pass the signal to FSM for comparisions
 			end if;
 
 			if slv_SW(4) = '1' then -- enter
 				slv_index <= 5; --To let know that the input is complete
-			--display the output on 7-seg
-			--pass the signal to FSM for comparisions
 			end if;
 				    
 	end process p_manualinput;
-
+	slv_lotteryinput <= slv_playerinput;
 end architecture a_manualinput;
 	
