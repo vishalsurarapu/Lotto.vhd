@@ -1,6 +1,6 @@
 library ieee; 
 use ieee.std_logic_1164.all; 
-entity e_my_lotto is 
+entity e_my_lottery is 
 port( SW : in std_logic_vector (9 downto 0);
 	CLOCK_50    : in  STD_LOGIC ;
 	KEY: in std_logic_vector(3 downto 0); 
@@ -12,9 +12,9 @@ port( SW : in std_logic_vector (9 downto 0);
 	HEX4:		out				std_logic_vector(0 to 6);
 	HEX5:		out				std_logic_vector(0 to 6)
 );
-end entity e_my_lotto; 
+end entity e_my_lottery; 
 
-architecture a_my_lotto of e_my_lotto is 
+architecture a_my_lottery of e_my_lottery is 
 -- all signal assignments and component assignments 
 -- declare the process signals and vriables slv_input_number
 
@@ -25,7 +25,7 @@ end component;
 
 component e_FSM is 
    port (
-		sl_resetn: in    std_logic; 
+		sl_reset: in    std_logic; 
 		sl_start: in    std_logic; 
 		sl_clock: in    std_logic;
 		slv_index_location: in std_logic_vector(2 downto 0);
@@ -80,16 +80,9 @@ begin
 	-- So basically SW(9) goes into sl_start_int so its our start 
 	-- ofc we can change it or even change the logic just wanted to have a first logic
 
-	I_MEM: e_memory_block port map(
-		address => slv_address_int,
-		data => "00000000",
-		clock => CLOCK_50,
-		wren => '0',
-		q => slv_data_from_memory_int);
-
 	I_FSM: e_FSM port map(
 		sl_clock => CLOCK_50,
-		sl_resetn => sl_resetn_int,
+		sl_reset => sl_resetn_int,
 		sl_start => sl_start_int,
 		sl_won => sl_is_won_int,
 		sl_value_is_equal => sl_value_is_equal_int,
@@ -111,4 +104,4 @@ begin
 		sl_value_is_equal => sl_value_is_equal_int,
 		slv_manualinput_value => slv_manualinput_value_int
 	);
-end architecture a_my_lotto;
+end architecture a_my_lottery;
