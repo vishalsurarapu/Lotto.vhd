@@ -5,13 +5,14 @@ use ieee.numeric_std.all;
 entity e_checkingNumber is
     port(
         sl_clock, sl_resetn: in std_logic;
-        sl_check_next_number: in std_logic;
-        slv_input_number: in std_logic_vector(7 downto 0);
+        sl_move_next: in std_logic;
         slv_address_to_memory : out std_logic_vector(4 downto 0);
-        slv_data_from_memory : in std_logic_vector(7 downto 0);
+        slv_data_from_memory : in std_logic_vector(4 downto 0);
         sl_value_is_equal: out std_logic;
-        sl_found_out: out std_logic;
+        sl_finished: in std_logic;
+        sl_won: out std_logic;
         slv_manualinput_value : in std_logic_vector(4 downto 0); -- manualinput
+        slv_index_location: out std_logic_vector(2 downto 0)
     );
 end entity e_checkingNumber;
 
@@ -37,11 +38,12 @@ begin
             else
                 -- compare the numbers from memory and also input 
                 if(sl_move_next = '1') then
-                    slv_index_location_int <= std_logig_vector(unsigned(slv_index_location_int) + 1);
+                    slv_index_location_int <= std_logic_vector(unsigned(slv_index_location_int) + 1);
                     --loading numbers for next step
                 end if;
-                if(sl_won = '1') then
-                    --user won
+                if(sl_finished = '1') then
+                    -- user won
+                    -- also can do some stuff when user won idk
                     sl_found_reg_int <= '1';
                 end if;
             end if;
@@ -49,8 +51,10 @@ begin
     end process p_checkNumber;
 
 -- concurrent Signal Assignments:
+
     slv_address_to_memory <= '00' & slv_index_location_int ; -- for now i dont know how to address memory
     sl_value_is_equal <= '1' when (slv_data_from_memory = slv_value_reg_int) else '0';
-    sl_found_out <= sl_found_reg_int;
+    sl_won <= sl_found_reg_int;
+    slv_index_location <= slv_index_location_int;
 
 end architecture a_checkingNumber;
