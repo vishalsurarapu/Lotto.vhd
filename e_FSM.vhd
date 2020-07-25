@@ -22,7 +22,7 @@ signal fsm_state, fsm_nextstate : t_fsm_states;
    
 begin 
  
- p_FSM_transitions: process (fsm_state, sl_start , sl_value_is_equal) -- state table
+ p_FSM_transitions: process (fsm_state, sl_start , sl_value_is_equal , slv_index_location) -- state table
    begin
       case fsm_state IS
          when S_WAIT_START =>    
