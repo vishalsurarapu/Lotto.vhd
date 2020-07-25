@@ -1,6 +1,8 @@
 library ieee;
 use ieee.std_logic_1164.all;
-entity FSM is 
+use ieee.numeric_std.all;
+
+entity e_FSM is 
    port (
     sl_reset                  : in    std_logic; 
 	 sl_start                  : in    std_logic; 
@@ -11,12 +13,10 @@ entity FSM is
     sl_won: out std_logic;
     sl_move_next: out std_logic
     ); -- needs to be instatiated to key 0 in the mother entity for reset
-end entity FSM;
+end entity e_FSM;
 
-architecture a_winning_FSM of e_winning_FSM is 
+architecture a_FSM of e_FSM is 
  
-signal sl_reset   : std_logic;
-
 type t_fsm_states is (S_WAIT_START, S_LOOP_CONDITION, S_WAIT_FOR_READ, S_CHECK_NUMBER, S_DONE);
 signal fsm_state, fsm_nextstate : t_fsm_states;
    
@@ -69,11 +69,12 @@ p_FSM_nextstate: process (sl_clock)
       end if;
    end process p_FSM_nextstate;
 
-   sl_load_values <= '1' when (fsm_state S_WAIT_START) and (sl_start = '0') else '0';
-   sl_won <= '1' when (fsm_state = S_CHECK_NUMBER) and 0; -- win codition still questionable based on signals ??
+   sl_load_values <= '1' when (fsm_state = S_WAIT_START) and (sl_start = '0') else '0';
+   -- sl_won <= '1' when (fsm_state = S_CHECK_NUMBER) and '0'; -- win codition still questionable based on signals ??
+   sl_won <= '0'; 
    sl_move_next <= '1' when (fsm_state = S_CHECK_NUMBER) and (unsigned(slv_index_location) < 5) else '0';
 
-end architecture a_winning_FSM;
+end architecture a_FSM;
 
  
 

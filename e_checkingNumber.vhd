@@ -9,6 +9,7 @@ entity e_checkingNumber is
         slv_address_to_memory : out std_logic_vector(4 downto 0);
         slv_data_from_memory : in std_logic_vector(4 downto 0);
         sl_value_is_equal: out std_logic;
+        sl_load_values: in std_logic;
         sl_finished: in std_logic;
         sl_won: out std_logic;
         slv_manualinput_value : in std_logic_vector(4 downto 0); -- manualinput
@@ -28,7 +29,7 @@ begin
         if(sl_resetn ='0') then
             --reset all vauels to initials
             slv_value_reg_int <= (others => '0');
-            sl_found_reg_int <= (others => '0');
+            sl_found_reg_int <= '0';
             slv_index_location_int <= (others => '0');
         elsif (rising_edge(sl_clock)) then
             if(sl_load_values = '1') then
@@ -52,7 +53,7 @@ begin
 
 -- concurrent Signal Assignments:
 
-    slv_address_to_memory <= '00' & slv_index_location_int ; -- for now i dont know how to address memory
+    slv_address_to_memory <= "00" & slv_index_location_int ; -- for now i dont know how to address memory
     sl_value_is_equal <= '1' when (slv_data_from_memory = slv_value_reg_int) else '0';
     sl_won <= sl_found_reg_int;
     slv_index_location <= slv_index_location_int;

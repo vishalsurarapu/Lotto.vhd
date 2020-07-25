@@ -2,6 +2,7 @@ library ieee;
 use ieee.std_logic_1164.all; 
 entity e_my_lotto is 
 port( SW : in std_logic_vector (9 downto 0);
+	CLOCK_50    : in  STD_LOGIC ;
 	KEY: in std_logic_vector(3 downto 0); 
 	LEDR: out std_logic_vector(9 downto 0); 
 	HEX0:		out				std_logic_vector(0 to 6);
@@ -17,6 +18,11 @@ architecture a_my_lotto of e_my_lotto is
 -- all signal assignments and component assignments 
 -- declare the process signals and vriables slv_input_number
 
+component e_flipflop
+	   port ( sl_D, sl_Resetn, sl_Clock   : in   std_logic;
+			  sl_Q                 		  : out  std_logic);
+end component;
+
 component e_FSM is 
    port (
 		sl_resetn: in    std_logic; 
@@ -25,11 +31,10 @@ component e_FSM is
 		slv_index_location: in std_logic_vector(2 downto 0);
 		sl_value_is_equal: in std_logic;
 		sl_load_values: out std_logic;
-		sl_move_next: out std_logic
 		sl_won: out std_logic;
 		sl_move_next: out std_logic
 	); -- needs to be instatiated to key 0 in the mother entity for reset
-end component FSM;
+end component e_FSM;
 
 component e_memory_block is
 	port ( address    : in  std_logic_vector (4 downto 0);
@@ -48,6 +53,7 @@ component e_checkingNumber is
         slv_data_from_memory : in std_logic_vector(4 downto 0);
 		sl_value_is_equal: out std_logic;
 		sl_finished: in std_logic;
+		sl_load_values: in std_logic;
         sl_won: out std_logic;
         slv_manualinput_value : in std_logic_vector(4 downto 0); -- manualinput
         slv_index_location: out std_logic_vector(2 downto 0)
@@ -101,6 +107,7 @@ begin
 		slv_address_to_memory => slv_address_int,
 		slv_data_from_memory => slv_data_from_memory_int,
 		slv_index_location => slv_index_location_int,
+		sl_load_values => sl_load_values_int,
 		sl_value_is_equal => sl_value_is_equal_int,
 		slv_manualinput_value => slv_manualinput_value_int
 	);
