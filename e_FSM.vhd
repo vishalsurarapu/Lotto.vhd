@@ -28,7 +28,7 @@ begin
          when S_WAIT_START =>    
 				if (sl_start = '1') then -- wait for program to be started
 					fsm_nextstate <= S_LOOP_CONDITION;
-				else
+				else 
 					fsm_nextstate <= S_WAIT_START;
 				end if;     
          when S_LOOP_CONDITION => -- program started and we checking for going for done which is finished or wait for another read
