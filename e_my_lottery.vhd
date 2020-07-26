@@ -96,7 +96,6 @@ begin
 		sl_resetn => sl_resetn_int,
 		sl_move_next => sl_move_next_int,
 		sl_finished => sl_is_won_int,
-		sl_won => LEDR(9), -- user won now we just show a LED !! This is going to be changed afterward
 		slv_address_to_memory => slv_address_int,
 		slv_data_from_memory => slv_data_from_memory_int,
 		slv_index_location => slv_index_location_int,
