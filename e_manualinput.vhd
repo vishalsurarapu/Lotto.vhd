@@ -18,7 +18,8 @@ use ieee.numeric_std.all;
 entity e_manualinput is
 	port (	slv_SW   : in  std_logic_vector(9 downto 0);
 			slv_playerinput : out std_logic_vector(3 downto 0);
-			slv_index : out std_logic_vector(2 downto 0) );
+			slv_index : out std_logic_vector(2 downto 0);
+			slv_whole_lotteryinput: out std_logic_vector(0 to 19) );
 
 end entity e_manualinput;
 
@@ -27,14 +28,19 @@ architecture a_manualinput of e_manualinput is
 	signal slv_lotteryinput : std_logic_vector(3 downto 0) ;
 	signal slv_index_int : std_logic_vector(2 downto 0) ;
 
+	--type digit_lotteryinput is array(integer range< >) of integer;
+	--type whole_lotteryinput is array(1 to 5) of digit_lotteryinput(10 downto 0);
+
+	signal slv_whole_lotteryinput_int : std_logic_vector(0 to 19);
+
 begin
 	-- set slv_index_int
 	
-	p_manualinput: process(slv_SW, slv_lotteryinput,slv_index_int)
+	p_manualinput: process(slv_SW, slv_lotteryinput, slv_index_int, slv_whole_lotteryinput_int)
 	
 	begin
-		
-		slv_index_int <= "001";
+		slv_whole_lotteryinput_int <= "10101010101010101010";
+		slv_index_int <= "000";
 		slv_lotteryinput <=  "1010";
 			-- set non slv_index_inted values arbitrarily
 
@@ -42,7 +48,17 @@ begin
 
 				if slv_lotteryinput = "1010" 		then					slv_lotteryinput <= "0000";
 				elsif( slv_lotteryinput = "1001") 	then					slv_lotteryinput <= "0000";
-				else			slv_lotteryinput <= std_logic_vector(unsigned(slv_lotteryinput) + 1);
+				else			
+					slv_lotteryinput <= std_logic_vector(unsigned(slv_lotteryinput) + 1);
+					case slv_index_int is
+						when "001" => slv_whole_lotteryinput_int(0 to 3) <= slv_lotteryinput;
+						when "010" => slv_whole_lotteryinput_int(4 to 7) <= slv_lotteryinput;
+						when "011" => slv_whole_lotteryinput_int(8 to 11) <= slv_lotteryinput;
+						when "100" => slv_whole_lotteryinput_int(12 to 15) <= slv_lotteryinput;
+						when "101" => slv_whole_lotteryinput_int(16 to 19) <= slv_lotteryinput;
+					end case;
+					--if((slv_index_int /= "000") and (slv_index_int /= "110")) then slv_whole_lotteryinput_int(unsigned(slv_index_int)) <= unsigned(slv_lotteryinput); end if;
+					--slv_whole_lotteryinput_int(slv_index_int) <= slv_lotteryinput when ((unsigned(slv_index_int) > 0) and (unsigned(slv_index_int) < 6)) else "1010";
 				end if;
 				
 			end if;
@@ -51,7 +67,17 @@ begin
 				
 				if(slv_lotteryinput = "1010") 		then			slv_lotteryinput <= "1001";
 				elsif( slv_lotteryinput = "0000")	then			slv_lotteryinput <= "1001";
-				else		slv_lotteryinput <= std_logic_vector(unsigned(slv_lotteryinput) - 1);
+				else		
+					slv_lotteryinput <= std_logic_vector(unsigned(slv_lotteryinput) - 1);
+					case slv_index_int is
+						when "001" => slv_whole_lotteryinput_int(0 to 3) <= slv_lotteryinput;
+						when "010" => slv_whole_lotteryinput_int(4 to 7) <= slv_lotteryinput;
+						when "011" => slv_whole_lotteryinput_int(8 to 11) <= slv_lotteryinput;
+						when "100" => slv_whole_lotteryinput_int(12 to 15) <= slv_lotteryinput;
+						when "101" => slv_whole_lotteryinput_int(16 to 19) <= slv_lotteryinput;
+					end case;
+					--if((slv_index_in /= "000") and (slv_index_int /= "110")) then slv_whole_lotteryinput_int(unsigned(slv_index_int)) <= unsigned(slv_lotteryinput); end if;
+					--slv_whole_lotteryinput_int(slv_index_int) <= slv_lotteryinput when ((unsigned(slv_index_int) > 0) and (unsigned(slv_index_int)) < 6) else "1010";
 				end if;
 				
 			end if;
@@ -75,9 +101,12 @@ begin
 				slv_index_int <= "110"; --To let know that the input is complete
 			end if;
 				    
-					 
+			
+			
+
 		slv_playerinput <= slv_lotteryinput;
 		slv_index	 <= slv_index_int ;
+		slv_whole_lotteryinput <= slv_whole_lotteryinput_int;
 		
 	end process p_manualinput;
 end architecture a_manualinput;
