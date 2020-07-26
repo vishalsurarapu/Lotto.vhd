@@ -76,7 +76,7 @@ p_FSM_nextstate: process (sl_clock, sl_reset)
    sl_load_values <= '1' when (fsm_state = S_WAIT_FOR_READ) else '0';
    -- sl_won <= '1' when (fsm_state = S_CHECK_NUMBER) and '0'; -- win codition still questionable based on signals ??
    sl_won <= '1' when (fsm_state = S_WON) else '0'; 
-   slv_situation(to_integer(to_unsigned(4,3) - (unsigned(slv_index_location) - to_unsigned(1,3)))) <= '0' when sl_value_is_equal = '1' else '0';
+   slv_situation(to_integer(to_unsigned(3,3) - (unsigned(slv_index_location) - to_unsigned(1,3)))) <= '0' when sl_value_is_equal = '1' else '0';
    --sl_move_next <= '1' when (fsm_state = S_CHECK_NUMBER) and (unsigned(slv_index_location) < 5) else '0';
 
 end architecture a_FSM;

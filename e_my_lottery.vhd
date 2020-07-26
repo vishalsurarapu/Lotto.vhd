@@ -59,13 +59,24 @@ component e_checkingNumber is
 	);
 end component;
 
-signal slv_manualinput_value_int, slv_data_from_memory_int: std_logic_vector(4 downto 0);
+component e_manualinput is
+	port(	slv_SW   : in  std_logic_vector(4 downto 0);
+			slv_lotteryinput : out std_logic_vector(3 downto 0);
+			slv_index : out std_logic_vector(2 downto 0);
+			slv_whole_lotteryinput: out std_logic_vector(0 to 19);
+			sl_start : in std_logic;
+			sl_resetn : in std_logic;
+			sl_clock : in std_logic);
+end component;
+
+signal slv_manualinput_value_int, slv_data_from_memory_int: std_logic_vector(3 downto 0);
 signal slv_address_int: std_logic_vector(4 downto 0);
 signal slv_index_location_int: std_logic_vector(2 downto 0);
 signal sl_resetn_int, sl_sync_int, sl_start_int : std_logic;
 signal sl_is_won_int, sl_load_values_int: std_logic;
 signal sl_value_is_equal_int : std_logic;
 signal sl_move_next_int : std_logic;
+signal slv_whole_lotteryinput_int: std_logic_vector(19 downto 0);
 
 
 
@@ -78,6 +89,16 @@ begin
 	I_SYNCFF2: e_flipflop port map (sl_sync_int, sl_resetn_int, CLOCK_50, sl_start_int); -- sl_sync_int goes into start when sl_resetn_int is not 0
 	-- So basically SW(9) goes into sl_start_int so its our start 
 	-- ofc we can change it or even change the logic just wanted to have a first logic
+
+	I_MANUAL_INPUT: e_manualinput port map(
+		slv_SW => SW(4 downto 0),
+		slv_lotteryinput => slv_manualinput_value_int,
+		slv_index => slv_index_location_int,
+		slv_whole_lotteryinput => slv_whole_lotteryinput_int,
+		sl_start => sl_start_int,
+		sl_resetn => sl_resetn_int,
+		sl_clock => CLOCK_50
+	);
 
 	I_FSM: e_FSM port map(
 		sl_clock => CLOCK_50,
