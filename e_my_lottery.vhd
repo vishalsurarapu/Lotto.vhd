@@ -69,13 +69,13 @@ component e_manualinput is
 			sl_clock : in std_logic);
 end component;
 
-component e_hex7seg is
+component e_7seg_display is
     port(	sl_resetn, sl_start  : in std_logic;
             sl_won, sl_clock     : in std_logic;
             slv_index            : in std_logic_vector(2 downto 0);
             slv_whole_lotteryinput: in std_logic_vector(0 to 19);
             slv_7seg             : out std_logic_vector(0 to 41) 	);
-end component e_hex7seg;
+end component e_7seg_display;
 
 component e_modulo_counter_er is
 	generic( n: natural := 4; k: integer := 15);
@@ -161,7 +161,7 @@ begin
 		slv_manualinput_value => slv_manualinput_value_int
 	);
 
-	I_7seg_display: e_hex7seg port map(
+	I_7seg_display: e_7seg_display port map(
 		sl_resetn => sl_resetn_int, 
 		sl_start => sl_start_int,
 		sl_won => sl_is_won_int,
