@@ -69,6 +69,23 @@ component e_manualinput is
 			sl_clock : in std_logic);
 end component;
 
+component e_hex7seg is
+    port(	sl_resetn, sl_start  : in std_logic;
+            sl_won, sl_clock     : in std_logic;
+            slv_index            : in std_logic_vector(2 downto 0);
+            slv_whole_lotteryinput: in std_logic_vector(0 to 19);
+            slv_7seg             : out std_logic_vector(0 to 41) 	);
+end component e_hex7seg;
+
+component e_modulo_counter_er is
+	generic( n: natural := 4; k: integer := 15);
+	port (	        sl_clock, sl_reset_n:	in std_logic;
+			sl_enable:  in	std_logic;
+			slv_Q:	    out     std_logic_vector(n-1 downto 0);
+			sl_rollover: out std_logic 
+			);
+end component e_modulo_counter_er;
+
 signal slv_manualinput_value_int, slv_data_from_memory_int: std_logic_vector(3 downto 0);
 signal slv_address_int: std_logic_vector(4 downto 0);
 signal slv_index_location_int: std_logic_vector(2 downto 0);
@@ -76,14 +93,26 @@ signal sl_resetn_int, sl_sync_int, sl_start_int : std_logic;
 signal sl_is_won_int, sl_load_values_int: std_logic;
 signal sl_value_is_equal_int : std_logic;
 signal sl_move_next_int : std_logic;
-signal slv_whole_lotteryinput_int: std_logic_vector(19 downto 0);
+signal slv_whole_lotteryinput_int: std_logic_vector(0 to 19);
+signal sl_enable_int : std_logic := '1';
+signal slv_SW_int : std_logic_vector(4 downto 0);
+signal slv_7seg_int: std_logic_vector(0 to 41);
 
-
+--signal sl_win_trigger_int : std_logic; -- indicates that the player has won (can be generated inside the FSM)
+signal sl_one_sec_en_int  :  std_logic;
+signal slv_led_on_off_int :  std_logic_vector (9 downto 0) ; 
 
 begin 
 	sl_resetn_int <= KEY(0); --reset button !! change it to desire
 
 
+	HEX5 <= slv_7seg_int(0 to 6);
+	HEX4 <= slv_7seg_int(7 to 13);
+	HEX3 <= slv_7seg_int(14 to 20);
+	HEX2 <= slv_7seg_int(21 to 27);
+	HEX1 <= slv_7seg_int(28 to 34);
+    HEX0 <= slv_7seg_int(35 to 41);
+    
 	-- we need to add flipflops to avoid time gaps in sync data as explained in courses
 	I_SYNCFF1: e_flipflop port map (SW(9), sl_resetn_int, CLOCK_50, sl_sync_int); -- Sw(9) goes into sl_sync_int when sl_resetn_int is not 0
 	I_SYNCFF2: e_flipflop port map (sl_sync_int, sl_resetn_int, CLOCK_50, sl_start_int); -- sl_sync_int goes into start when sl_resetn_int is not 0
@@ -123,4 +152,50 @@ begin
 		sl_value_is_equal => sl_value_is_equal_int,
 		slv_manualinput_value => slv_manualinput_value_int
 	);
+
+	I_7seg_display: e_hex7seg port map(
+		sl_resetn => sl_resetn_int, 
+		sl_start => sl_start_int,
+		sl_won => sl_is_won_int,
+		sl_clock => CLOCK_50,
+		slv_index => slv_index_int,
+		slv_whole_lotteryinput => slv_whole_lotteryinput_int,
+		slv_7seg => slv_7seg_int
+    );
+    
+-- this part is a process that calls a modulo counter and display a flash of light using LEDR with an interval of 1 sec once the winning trigger signal is activated (=1)  
+	
+	
+
+slv_led_on_off_int <= "0000000000"; -- initial value
+
+I_slow_clock: e_modulo_counter_er 
+    generic map	(	n => 26, k => 50000000)
+    port map	(	sl_clock	=>		CLOCK_50,
+                    sl_reset_n	=>		KEY(0),
+                    sl_enable	=>		sl_enable_int,
+                    slv_Q		=>		open,
+                    sl_rollover	=>		sl_one_sec_en_int
+                );
+p_mod_cnt: process(sl_clock_int, sl_resetn_int, sl_win_trigger_int)
+
+begin 
+if sl_resetn_int ='0' then -- low active reset using key
+     slv_led_on_off_int <= "0000000000"; 
+elsif (sl_win_trigger_int = '1') and ( sl_resetn_int = '1')  then 
+    if(rising_edge(sl_clock_int)) then
+        if(sl_enable_int ='1') then
+        
+            if slv_led_on_off_int = "0000000000" then 
+                slv_led_on_off_int <= "1111111111"; 
+            else 
+                slv_led_on_off_int <= "0000000000"; 
+            end if ; 
+        end if ;
+    end if ;
+end if ; 
+
+
+end process p_mod_cnt ;
+
 end architecture a_my_lottery;
