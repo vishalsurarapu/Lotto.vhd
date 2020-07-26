@@ -166,7 +166,7 @@ begin
 		sl_start => sl_start_int,
 		sl_won => sl_is_won_int,
 		sl_clock => CLOCK_50,
-		slv_index => slv_index_int,
+		slv_index => slv_index_location_int,
 		slv_whole_lotteryinput => slv_whole_lotteryinput_int,
 		slv_7seg => slv_7seg_int
     );
