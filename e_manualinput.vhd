@@ -63,8 +63,6 @@ begin
 						when "101" => slv_whole_lotteryinput_int(16 to 19) <= slv_lotteryinput_int;
 						when others => slv_whole_lotteryinput_int <= slv_whole_lotteryinput_int;
 					end case;
-				elsif slv_SW(0) = '0' then 
-					slv_whole_lotteryinput_int <= "10101010101010101010";
 					
 				end if;
 
