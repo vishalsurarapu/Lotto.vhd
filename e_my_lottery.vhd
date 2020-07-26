@@ -39,9 +39,9 @@ end component e_FSM;
 component e_memory_block is
 	port ( address    : in  std_logic_vector (4 downto 0);
 			clock      : in  std_logic ;
-			data       : in  std_logic_vector (7 downto 0);
+			data       : in  std_logic_vector (3 downto 0);
 			wren       : in  std_logic ;
-			q          : out std_logic_vector (7 downto 0) );
+			q          : out std_logic_vector (3 downto 0) );
 end component;
 
 component e_checkingNumber is 
@@ -50,7 +50,7 @@ component e_checkingNumber is
 		sl_resetn: in std_logic;
         sl_move_next: in std_logic;
         slv_address_to_memory : out std_logic_vector(4 downto 0);
-        slv_data_from_memory : in std_logic_vector(4 downto 0);
+        slv_data_from_memory : in std_logic_vector(3 downto 0);
 		sl_value_is_equal: out std_logic;
 		sl_finished: in std_logic;
 		sl_load_values: in std_logic;
@@ -128,6 +128,14 @@ begin
 		sl_resetn => sl_resetn_int,
 		sl_clock => CLOCK_50
 	);
+
+	
+	I_MEM: e_memory_block port map(
+		address => slv_address_int,
+		data => "0000",
+		clock => CLOCK_50,
+		wren => '0',
+		q => slv_data_from_memory_int);
 
 	I_FSM: e_FSM port map(
 		sl_clock => CLOCK_50,

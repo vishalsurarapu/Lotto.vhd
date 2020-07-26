@@ -6,7 +6,7 @@ entity e_checkingNumber is
     port(
         sl_clock, sl_resetn: in std_logic;
         sl_move_next: in std_logic;
-        slv_address_to_memory : out std_logic_vector(3 downto 0);
+        slv_address_to_memory : out std_logic_vector(4 downto 0);
         slv_data_from_memory : in std_logic_vector(3 downto 0);
         sl_value_is_equal: out std_logic;
         sl_load_values: in std_logic;
@@ -36,7 +36,7 @@ begin
 
 -- concurrent Signal Assignments:
 
-    slv_address_to_memory <= "0" & slv_index_location ; 
+    slv_address_to_memory <= "00" & slv_index_location ; 
     sl_value_is_equal <= '1' when (slv_data_from_memory = slv_value_reg_int) else '0';
 
 end architecture a_checkingNumber;
