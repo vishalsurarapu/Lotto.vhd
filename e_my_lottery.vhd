@@ -185,12 +185,12 @@ I_slow_clock: e_modulo_counter_er
                     slv_Q		=>		open,
                     sl_rollover	=>		sl_one_sec_en_int
                 );
-p_mod_cnt: process(sl_clock_int, sl_resetn_int, sl_win_trigger_int)
+p_mod_cnt: process(sl_clock_int, sl_resetn_int, sl_is_won_int)
 
 begin 
 if sl_resetn_int ='0' then -- low active reset using key
      slv_led_on_off_int <= "0000000000"; 
-elsif (sl_win_trigger_int = '1') and ( sl_resetn_int = '1')  then 
+elsif (sl_is_won_int = '1') and ( sl_resetn_int = '1')  then 
     if(rising_edge(sl_clock_int)) then
         if(sl_enable_int ='1') then
         
