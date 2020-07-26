@@ -1,13 +1,13 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-entity e_hex7seg is
+entity e_7seg_display is
     port(	sl_resetn, sl_start  : in std_logic;
             sl_won, sl_clock     : in std_logic;
             slv_index            : in std_logic_vector(2 downto 0);
             slv_whole_lotteryinput: in std_logic_vector(0 to 19);
             slv_7seg             : out std_logic_vector(0 to 41) 	);
-end entity e_hex7seg;
+end entity e_7seg_display;
 
 architecture a_hex7seg of e_hex7seg is
 
