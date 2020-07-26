@@ -5,7 +5,6 @@ use ieee.numeric_std.all;
 entity e_FSM is 
    port (
       sl_reset: in std_logic; 
-      sl_start: in std_logic; 
       sl_clock: in std_logic;
       slv_index_location: in std_logic_vector(2 downto 0);
       sl_value_is_equal: in std_logic;
@@ -23,11 +22,11 @@ signal slv_situation : std_logic_vector(4 downto 0);
 
 begin 
  
- p_FSM_transitions: process (fsm_state, sl_start , sl_value_is_equal , slv_index_location) -- state table
+ p_FSM_transitions: process (fsm_state , sl_value_is_equal , slv_index_location) -- state table
    begin
       case fsm_state is
          when S_WAIT_START =>    
-				if (unsigned(slv_index_location) > 0) then -- user started to edit first number
+            if (unsigned(slv_index_location) > 0) then -- user started to edit first number
 					fsm_nextstate <= S_LOOP_CONDITION;
 				else -- it's still on index 0 which means user did not input a value
 					fsm_nextstate <= S_WAIT_START;
@@ -37,7 +36,7 @@ begin
                if(unsigned(slv_situation) = 0) then
                   fsm_nextstate <= S_WON;
                else
-                  fsm_nextstate <= S_FAIL
+                  fsm_nextstate <= S_FAIL;
                end if;
 				else
                fsm_nextstate <= S_WAIT_FOR_READ;
@@ -48,10 +47,10 @@ begin
          when S_CHECK_NUMBER =>
 				if (sl_value_is_equal = '1') then
                fsm_nextstate <= S_LOOP_CONDITION;
-               slv_situation(4 - (slv_index_location - 1)) <= '0' ;
+               slv_situation(to_integer(to_unsigned(4,3) - (unsigned(slv_index_location) - to_unsigned(1,3)))) <= '0' ;
             else
                fsm_nextstate <= S_LOOP_CONDITION;
-               slv_situation(4 - (slv_index_location - 1)) <= '1' ;
+               slv_situation(to_integer(to_unsigned(4,3) - (unsigned(slv_index_location) - to_unsigned(1,3)))) <= '1' ;
 				end if;
          when others => fsm_nextstate <= S_WAIT_START;
       end case;
@@ -62,7 +61,6 @@ p_FSM_nextstate: process (sl_clock)
       if  (rising_edge(sl_clock)) then
          if (sl_reset = '0') then   -- synchronous clear
             fsm_state <= S_WAIT_START;
-            slv_situation <= "00000";
          else
             fsm_state <= fsm_nextstate;
          end if;

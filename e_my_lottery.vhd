@@ -26,7 +26,6 @@ end component;
 component e_FSM is 
    port (
 		sl_reset: in    std_logic; 
-		sl_start: in    std_logic; 
 		sl_clock: in    std_logic;
 		slv_index_location: in std_logic_vector(2 downto 0);
 		sl_value_is_equal: in std_logic;
@@ -54,9 +53,8 @@ component e_checkingNumber is
 		sl_value_is_equal: out std_logic;
 		sl_finished: in std_logic;
 		sl_load_values: in std_logic;
-        sl_won: out std_logic;
         slv_manualinput_value : in std_logic_vector(4 downto 0); -- manualinput
-        slv_index_location: out std_logic_vector(2 downto 0)
+        slv_index_location: in std_logic_vector(2 downto 0)
 	);
 end component;
 
@@ -83,7 +81,6 @@ begin
 	I_FSM: e_FSM port map(
 		sl_clock => CLOCK_50,
 		sl_reset => sl_resetn_int,
-		sl_start => sl_start_int,
 		sl_won => sl_is_won_int,
 		sl_value_is_equal => sl_value_is_equal_int,
 		sl_load_values => sl_load_values_int,
