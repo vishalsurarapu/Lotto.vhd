@@ -9,7 +9,7 @@ entity e_7seg_display is
             slv_7seg             : out std_logic_vector(0 to 41) 	);
 end entity e_7seg_display;
 
-architecture a_hex7seg of e_hex7seg is
+architecture a_hex7seg of e_7seg_display is
 
 -- Declarations:
 signal slv_7seg_int: std_logic_vector(0 to 41);
